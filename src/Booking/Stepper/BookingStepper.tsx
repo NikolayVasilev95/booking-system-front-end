@@ -14,6 +14,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Employee } from "../../services/Employees";
 import { Position } from "../../services/position/types";
+import { Service } from "../../services/Service/types";
 import SelectEmployee from "./SelectEmployee/SelectEmployee";
 import SelectSchedule from "./SelectSchedule/SelectSchedule";
 import SelectService from "./SelectService/SelectService";
@@ -37,21 +38,27 @@ const useStyles = makeStyles((theme: Theme) =>
 const BookingStepper = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
+  const [selectedPosition, setSelectedPosition] = useState<Position>();
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee>();
   const [employeeName, setEmployeeName] = useState<string>();
-  const [service, setService] = useState<Services[]>();
+  const [services, setServices] = useState<Service[]>();
   const [schedule, setSchedule] = useState<Schedules>();
   const steps = ["изберете служител", "изберете услуга", "резервирай час"];
 
   const handleSelectedPosition = (position: Position) => {
-    console.log(position);
+    setSelectedPosition(position)
   };
 
   const handleSelectedEmployee = (employee: Employee) => {
-    console.log(employee);
+    setSelectedEmployee(employee)
   };
 
-  const handleSelectedServices = (name: string[]) => {
-    console.log(name);
+  const handleServices = (services: Service[]) => {
+    setServices(services);
+  };
+
+  const handleSelectedServices = (service: Service[]) => {
+    console.log(service);
   };
 
   const getStepContent = (stepIndex: number) => {
@@ -61,20 +68,26 @@ const BookingStepper = () => {
           <SelectEmployee
             handleSelectedEmployee={handleSelectedEmployee}
             handleSelectedPosition={handleSelectedPosition}
+            handleServices={handleServices}
           />
         );
       case 1:
         return (
-          <SelectService handleSelectedServices={handleSelectedServices} />
+          services &&
+          <SelectService services={services} handleSelectedServices={handleSelectedServices} />
         );
       case 2:
-        return <SelectSchedule />;
+        return (
+          selectedEmployee &&
+          <SelectSchedule employeeId={selectedEmployee?.id}/>
+        );
       default:
         return <></>;
     }
   };
 
-  const handleNext = () => {
+  const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -101,7 +114,7 @@ const BookingStepper = () => {
             container
             direction="column"
             alignItems="center"
-            justify="center"
+            justifyContent="center"
           >
             {activeStep === steps.length ? (
               <>
@@ -112,6 +125,7 @@ const BookingStepper = () => {
               </>
             ) : (
               <>
+              <form autoComplete="off" onSubmit={(e) => handleNext(e)}>
                 <Grid item container className={classes.instructions}>
                   {getStepContent(activeStep)}
                 </Grid>
@@ -126,11 +140,12 @@ const BookingStepper = () => {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleNext}
+                    type="submit"
                   >
                     {activeStep === steps.length - 1 ? "Finish" : "Next"}
                   </Button>
                 </Grid>
+                </form>
               </>
             )}
           </Grid>

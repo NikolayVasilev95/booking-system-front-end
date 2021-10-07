@@ -11,6 +11,9 @@ import {
 } from "@material-ui/core";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Position } from "../../../services/position/types";
+import { allService, getService } from "../../../services/Service";
+import { Service } from "../../../services/Service/types";
 import { Services } from "../types";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -25,80 +28,49 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 type Props = {
-  handleSelectedServices: (name: string[]) => void;
+  services: Service[];
+  handleSelectedServices: (service: Service[]) => void;
 };
 
-const SelectService = ({ handleSelectedServices }: Props) => {
+const SelectService = ({ services, handleSelectedServices }: Props) => {
   const classes = useStyles();
-  type Chekboxes = { [x: number]: boolean };
-  const [state, setState] = useState<Chekboxes[]>([{ 0: false }]);
-  const [services, setServices] = useState<Services[]>();
-  useEffect(() => {
-    interface ServicesResponse {
-      result: Services[];
-      status: string;
-    }
-    // axios
-    //   .get<ServicesResponse>("http://localhost:8998/api/services/query")
-    //   .then((response) => {
-    //     console.log(response.data.result);
-    //     setServices(response.data.result);
-    //     const chekboxes = response.data.result.map((_, index) => ({
-    //       [index]: false,
-    //     }));
-    //     console.log(chekboxes);
-
-    //     setState(chekboxes);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }, []);
+  type Chekboxes = { name: string; value: boolean };
+  const [isCheckboxesChecked, setIsCheckboxesChecked] = useState<Chekboxes[]>();
+  const [selectedService, setSelectedService] = useState<Service>();
+  
+  useEffect(()=> {
+    setIsCheckboxesChecked(services.map((service)=> ({name: service.name, value: false})))
+  }, [services])
+  
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event);
-
-    const newValue = state?.find(
-      (el, index) =>
-        //@ts-ignore
-        Object.keys(el)[0] === event.target.name && {
-          [event.target.name]: event.target.checked,
-        }
-    );
-    console.log(newValue);
-    if (newValue) {
-      console.log(newValue);
-
-      setState([
-        //   ...state,
-        newValue,
-      ]);
-      console.log(state);
-    }
+    const newIsCheckboxesCheckedState = isCheckboxesChecked?.map((checkbox) => checkbox.name === event.target.name ? {name: checkbox.name , value: !checkbox.value} : checkbox);
+    setIsCheckboxesChecked(newIsCheckboxesCheckedState);
+    handleSelectedServices(services.filter((service, index)=> service.name === newIsCheckboxesCheckedState?.[index].name && newIsCheckboxesCheckedState?.[index].value))
   };
 
   return (
     <>
+    {services &&
       <FormControl component="fieldset" className={classes.formControl}>
-        <FormLabel component="legend">Assign responsibility</FormLabel>
+        <FormLabel component="legend">Услуги</FormLabel>
         <FormGroup>
-          {services &&
-            services?.length > 0 &&
-            state &&
-            services?.map((service, index) => (
+           { services.map((service: Service, index) => (
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={false}
+                    checked={isCheckboxesChecked?.[index].value ?? false}
                     onChange={handleChange}
-                    name={index.toString()}
+                    name={service.name}
+                    key={service.id}
                   />
                 }
-                label={service.name}
+                label={`${service.name} - ${service.price} лв.`}
               />
             ))}
         </FormGroup>
       </FormControl>
+    }
     </>
   );
 };

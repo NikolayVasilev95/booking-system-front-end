@@ -5,12 +5,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { Employees, Positions } from "../types";
-import axios from "axios";
+import { Employees, Positions, Services } from "../types";
 import { CardMedia, NativeSelect, Paper, Typography } from "@material-ui/core";
 import { allPosition } from "../../../services/position";
 import { Position } from "../../../services/position/types";
 import { Employee } from "../../../services/Employees";
+import { Service } from "../../../services/Service/types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -33,11 +33,13 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
   handleSelectedEmployee: (emoloyee: Employee) => void;
   handleSelectedPosition: (position: Position) => void;
+  handleServices: (services: Service[]) => void
 };
 
 const SelectEmployee = ({
   handleSelectedEmployee,
   handleSelectedPosition,
+  handleServices
 }: Props) => {
   const classes = useStyles();
   const [selectedPosition, setSelectedPosition] = useState<Position>();
@@ -46,7 +48,7 @@ const SelectEmployee = ({
   const [employees, setEmployees] = useState<Employee[]>();
 
   useEffect(() => {
-    allPosition({ name: "stringqw" })
+    allPosition({ name: "string12" })
       .then(({ data }) => {
         console.log(data);
         setPositions(data.result);
@@ -59,19 +61,23 @@ const SelectEmployee = ({
   const handleChangePosition = (
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
-    setSelectedPosition(
-      positions?.find(
-        (position) => position.name === (event.target.value as string)
-      )
+    const position = positions?.find(
+      (position) => position.name === (event.target.value as string)
     );
-    allPosition({ name: event.target.value })
+    if (position) {
+      setSelectedPosition(position);
+      handleSelectedPosition(position);
+      allPosition({ name: event.target.value })
       .then(({ data }) => {
         console.log(data);
         setEmployees(data.result[0].Employees);
+        data.result[0].Services &&
+        handleServices(data.result[0].Services);
       })
       .catch((error) => {
         console.log(error);
       });
+    }
   };
 
   const handleChangeEmployee = (
@@ -89,30 +95,31 @@ const SelectEmployee = ({
   return (
     <>
       <Paper elevation={3} className={classes.root}>
+      {positions && (
         <FormControl fullWidth required className={classes.formControl}>
           <InputLabel id="position">Позиция</InputLabel>
           <Select
             labelId="position"
             id="position-required"
-            value={selectedPosition?.name}
+            value={selectedPosition?.name ?? ""}
             onChange={handleChangePosition}
             className={classes.selectEmpty}
           >
-            {positions &&
-              positions.map((position: Position) => (
+            {positions.map((position: Position) => (
                 <MenuItem key={position.id} value={position.name}>
                   {position.name}
                 </MenuItem>
               ))}
           </Select>
         </FormControl>
+      )}
         {selectedPosition && (
           <FormControl fullWidth required className={classes.formControl}>
             <InputLabel id="employee">Име на служителя</InputLabel>
             <Select
               labelId="employee"
               id="employee-required"
-              value={selectedEmployee?.firstName}
+              value={selectedEmployee?.firstName ?? ""}
               onChange={handleChangeEmployee}
               className={classes.selectEmpty}
             >

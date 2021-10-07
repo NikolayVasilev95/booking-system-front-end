@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Schedules } from "../types";
 import {
   Calendar,
@@ -23,6 +23,7 @@ import {
   Theme,
   Typography,
 } from "@material-ui/core";
+import { allCalendar } from "../../../services/Calendar";
 
 const localizer = momentLocalizer(moment);
 
@@ -52,19 +53,32 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-type Props = {
-  schedules: Schedules;
-};
-
 type SelectedEventForCreat = {
   start: stringOrDate;
   end: stringOrDate;
 };
-const SelectSchedule = () => {
+
+type Props = {
+  employeeId: number | undefined;
+  // handleSelectedServices: (service: Service[]) => void;
+};
+
+const SelectSchedule = ({ employeeId }: Props) => {
   const classes = useStyles();
   const [isOpenCreatEventModal, setIsOpenCreatEventModal] = useState(false);
   const [selectedEventForCreat, setSelectedEventForCreat] =
     useState<SelectedEventForCreat>();
+
+  useEffect(()=> {
+    allCalendar({id: employeeId && employeeId})
+    .then(({data}) => {
+      console.log(data);
+      console.log("moment ", moment().toDate());
+      
+    }).catch(error => {
+      console.log(error);
+    })
+  });
 
   const myEventsList = [
     {
@@ -81,7 +95,7 @@ const SelectSchedule = () => {
             container
             direction="column"
             alignItems="center"
-            justify="center"
+            justifyContent="center"
             style={{
               position: "absolute",
               top: 0,
@@ -95,7 +109,6 @@ const SelectSchedule = () => {
               className={classes.root}
               style={{ width: "50%", textAlign: "center" }}
             >
-              <form autoComplete="off" onSubmit={(e) => handleSubmit(e)}>
                 <FormControl
                   fullWidth
                   className={classes.margin}
@@ -151,7 +164,6 @@ const SelectSchedule = () => {
                     Запазване
                   </Button>
                 </FormControl>
-              </form>
             </Paper>
           </Grid>
         )}
