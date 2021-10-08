@@ -33,13 +33,13 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
   handleSelectedEmployee: (emoloyee: Employee) => void;
   handleSelectedPosition: (position: Position) => void;
-  handleServices: (services: Service[]) => void
+  handleServices: (services: Service[]) => void;
 };
 
 const SelectEmployee = ({
   handleSelectedEmployee,
   handleSelectedPosition,
-  handleServices
+  handleServices,
 }: Props) => {
   const classes = useStyles();
   const [selectedPosition, setSelectedPosition] = useState<Position>();
@@ -48,7 +48,8 @@ const SelectEmployee = ({
   const [employees, setEmployees] = useState<Employee[]>();
 
   useEffect(() => {
-    allPosition({ name: "string12" })
+    // allPosition({ name: "Бръснар" })
+    allPosition()
       .then(({ data }) => {
         console.log(data);
         setPositions(data.result);
@@ -68,15 +69,14 @@ const SelectEmployee = ({
       setSelectedPosition(position);
       handleSelectedPosition(position);
       allPosition({ name: event.target.value })
-      .then(({ data }) => {
-        console.log(data);
-        setEmployees(data.result[0].Employees);
-        data.result[0].Services &&
-        handleServices(data.result[0].Services);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        .then(({ data }) => {
+          console.log(data);
+          setEmployees(data.result[0].Employees);
+          data.result[0].Services && handleServices(data.result[0].Services);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
@@ -95,24 +95,24 @@ const SelectEmployee = ({
   return (
     <>
       <Paper elevation={3} className={classes.root}>
-      {positions && (
-        <FormControl fullWidth required className={classes.formControl}>
-          <InputLabel id="position">Позиция</InputLabel>
-          <Select
-            labelId="position"
-            id="position-required"
-            value={selectedPosition?.name ?? ""}
-            onChange={handleChangePosition}
-            className={classes.selectEmpty}
-          >
-            {positions.map((position: Position) => (
+        {positions && (
+          <FormControl fullWidth required className={classes.formControl}>
+            <InputLabel id="position">Позиция</InputLabel>
+            <Select
+              labelId="position"
+              id="position-required"
+              value={selectedPosition?.name ?? ""}
+              onChange={handleChangePosition}
+              className={classes.selectEmpty}
+            >
+              {positions.map((position: Position) => (
                 <MenuItem key={position.id} value={position.name}>
                   {position.name}
                 </MenuItem>
               ))}
-          </Select>
-        </FormControl>
-      )}
+            </Select>
+          </FormControl>
+        )}
         {selectedPosition && (
           <FormControl fullWidth required className={classes.formControl}>
             <InputLabel id="employee">Име на служителя</InputLabel>

@@ -4,8 +4,13 @@ import BookingStepper from "./Stepper/BookingStepper";
 
 const Booking = () => {
   return (
-    <Grid container direction="column" alignItems="center" justifyContent="center">
-      <Grid item>
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Grid item md={12}>
         <BookingStepper />
       </Grid>
     </Grid>

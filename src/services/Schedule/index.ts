@@ -5,21 +5,19 @@ import { Schedule } from "./types";
 const baseUrl = "http://localhost:8998/api";
 
 export async function newSchedule(
-  Schedule: Schedule
+  schedule: Schedule
 ): Promise<AxiosResponse<CustomResponse<Schedule>>> {
-  return await axios.post<CustomResponse<Schedule>>(
-    `${baseUrl}/schedule`,
-    Schedule
-  );
+  return await axios.post<CustomResponse<Schedule>>(`${baseUrl}/schedule`, {
+    schedule,
+  });
 }
 
 export async function updateSchedule(
-  Schedule: Schedule
+  schedule: Schedule
 ): Promise<AxiosResponse<CustomResponse<Schedule>>> {
-  return await axios.patch<CustomResponse<Schedule>>(
-    `${baseUrl}/schedule`,
-    Schedule
-  );
+  return await axios.patch<CustomResponse<Schedule>>(`${baseUrl}/schedule`, {
+    schedule,
+  });
 }
 
 // export async function deleteSchedule(id: string): Promise<Schedule> {
