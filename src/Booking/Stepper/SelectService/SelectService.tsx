@@ -37,25 +37,36 @@ const SelectService = ({ services, handleSelectedServices }: Props) => {
   type Chekboxes = { name: string; value: boolean };
   const [isCheckboxesChecked, setIsCheckboxesChecked] = useState<Chekboxes[]>();
   const [selectedService, setSelectedService] = useState<Service>();
-  
-  useEffect(()=> {
-    setIsCheckboxesChecked(services.map((service)=> ({name: service.name, value: false})))
-  }, [services])
-  
+
+  useEffect(() => {
+    setIsCheckboxesChecked(
+      services.map((service) => ({ name: service.name, value: false }))
+    );
+  }, [services]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newIsCheckboxesCheckedState = isCheckboxesChecked?.map((checkbox) => checkbox.name === event.target.name ? {name: checkbox.name , value: !checkbox.value} : checkbox);
+    const newIsCheckboxesCheckedState = isCheckboxesChecked?.map((checkbox) =>
+      checkbox.name === event.target.name
+        ? { name: checkbox.name, value: !checkbox.value }
+        : checkbox
+    );
     setIsCheckboxesChecked(newIsCheckboxesCheckedState);
-    handleSelectedServices(services.filter((service, index)=> service.name === newIsCheckboxesCheckedState?.[index].name && newIsCheckboxesCheckedState?.[index].value))
+    handleSelectedServices(
+      services.filter(
+        (service, index) =>
+          service.name === newIsCheckboxesCheckedState?.[index].name &&
+          newIsCheckboxesCheckedState?.[index].value
+      )
+    );
   };
 
   return (
     <>
-    {services &&
-      <FormControl component="fieldset" className={classes.formControl}>
-        <FormLabel component="legend">Услуги</FormLabel>
-        <FormGroup>
-           { services.map((service: Service, index) => (
+      {services && (
+        <FormControl component="fieldset" className={classes.formControl}>
+          <FormLabel component="legend">Услуги</FormLabel>
+          <FormGroup>
+            {services.map((service: Service, index) => (
               <FormControlLabel
                 control={
                   <Checkbox
@@ -68,9 +79,9 @@ const SelectService = ({ services, handleSelectedServices }: Props) => {
                 label={`${service.name} - ${service.price} лв.`}
               />
             ))}
-        </FormGroup>
-      </FormControl>
-    }
+          </FormGroup>
+        </FormControl>
+      )}
     </>
   );
 };

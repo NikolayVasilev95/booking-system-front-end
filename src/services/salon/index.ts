@@ -1,10 +1,15 @@
 import axios, { AxiosResponse } from "axios";
+import { CustomResponse } from "../types";
 import { Salon } from "./types";
 
 const baseUrl = "http://localhost:8998/api";
 
-export async function newSalon(Salon: Salon): Promise<AxiosResponse<Salon>> {
-  return await axios.post<Salon>(`${baseUrl}/salon`, Salon);
+export async function newSalon(
+  Salon: Salon
+): Promise<AxiosResponse<CustomResponse<Salon>>> {
+  return await axios.post<CustomResponse<Salon>>(`${baseUrl}/salon`, {
+    salon: Salon,
+  });
 }
 
 export async function updateSalon(Salon: Salon): Promise<AxiosResponse<Salon>> {
@@ -24,8 +29,10 @@ export async function getSalon(id: string): Promise<AxiosResponse<Salon>> {
   return await axios.get<Salon>(`${baseUrl}/salon/${id}`);
 }
 
-export async function allSalon(query?: any): Promise<AxiosResponse<Salon[]>> {
-  return await axios.get<Salon[]>(
+export async function allSalon(
+  query?: any
+): Promise<AxiosResponse<CustomResponse<Salon[]>>> {
+  return await axios.get<CustomResponse<Salon[]>>(
     `${baseUrl}/salons/query${query ? `?${query}` : "/"}`
   );
 }

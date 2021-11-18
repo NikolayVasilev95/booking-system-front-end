@@ -13,7 +13,12 @@ const GuardedRoute = (props: PrivateRouteProps) => {
     <Route
       {...rest}
       render={(props) =>
-        localStorage.getItem("@token") ? <Dashboard /> : <Redirect to="/" />
+        localStorage.getItem("@token") ? (
+          // <Dashboard />
+          <Component {...props} />
+        ) : (
+          <Redirect to="/" />
+        )
       }
     />
   );

@@ -14,11 +14,15 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Employee } from "../../services/Employees";
 import { Position } from "../../services/position/types";
+import { newSchedule, updateSchedule } from "../../services/Schedule";
+import { Schedule } from "../../services/Schedule/types";
 import { Service } from "../../services/Service/types";
+import { CustomAlert } from "../../utils/CustomAlert";
 import SelectEmployee from "./SelectEmployee/SelectEmployee";
 import SelectSchedule from "./SelectSchedule/SelectSchedule";
 import SelectService from "./SelectService/SelectService";
 import { Employees, Positions, Schedules, Services } from "./types";
+import { format } from "date-fns";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,17 +44,20 @@ const BookingStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [selectedPosition, setSelectedPosition] = useState<Position>();
   const [selectedEmployee, setSelectedEmployee] = useState<Employee>();
+  const [selectedServices, setSelectedServices] = useState<Service[]>();
   const [employeeName, setEmployeeName] = useState<string>();
   const [services, setServices] = useState<Service[]>();
   const [schedule, setSchedule] = useState<Schedules>();
+  const [finishData, setFinishData] = useState<string>("");
+
   const steps = ["изберете служител", "изберете услуга", "резервирай час"];
 
   const handleSelectedPosition = (position: Position) => {
-    setSelectedPosition(position)
+    setSelectedPosition(position);
   };
 
   const handleSelectedEmployee = (employee: Employee) => {
-    setSelectedEmployee(employee)
+    setSelectedEmployee(employee);
   };
 
   const handleServices = (services: Service[]) => {
@@ -58,7 +65,36 @@ const BookingStepper = () => {
   };
 
   const handleSelectedServices = (service: Service[]) => {
-    console.log(service);
+    setSelectedServices(service);
+  };
+
+  const handleSelectedSchedule = (schedule: Schedule) => {
+    console.log(schedule);
+    if (schedule) {
+      newSchedule(schedule)
+        .then(({ data }) => {
+          console.log(data.result);
+          if (data.status === "success") {
+            const services = selectedServices
+              ? selectedServices.map((service) => service.name).join(", ")
+              : "";
+            setFinishData(
+              `Вашата резервация за ${services} от ${format(
+                new Date(schedule.start),
+                "d.MM.Y H:mm:ss"
+              )} до ${format(
+                new Date(schedule.end),
+                "d.MM.Y H:mm:ss"
+              )} е приета. Влезте си в ${
+                schedule.email
+              } за да потвърдите резервацията`
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   const getStepContent = (stepIndex: number) => {
@@ -73,13 +109,21 @@ const BookingStepper = () => {
         );
       case 1:
         return (
-          services &&
-          <SelectService services={services} handleSelectedServices={handleSelectedServices} />
+          services && (
+            <SelectService
+              services={services}
+              handleSelectedServices={handleSelectedServices}
+            />
+          )
         );
       case 2:
         return (
-          selectedEmployee &&
-          <SelectSchedule employeeId={selectedEmployee?.id}/>
+          selectedEmployee && (
+            <SelectSchedule
+              employeeId={selectedEmployee?.id}
+              handleSelectedSchedule={handleSelectedSchedule}
+            />
+          )
         );
       default:
         return <></>;
@@ -87,7 +131,7 @@ const BookingStepper = () => {
   };
 
   const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -118,33 +162,40 @@ const BookingStepper = () => {
           >
             {activeStep === steps.length ? (
               <>
-                <Grid item className={classes.instructions}>
-                  All steps completed
+                <Grid item sm={12} md={3}></Grid>
+                <Grid item sm={12} md={6} className={classes.instructions}>
+                  <CustomAlert
+                    severity="success"
+                    title="Успешно изпратена заявка за резервация"
+                    data={finishData}
+                  />
                 </Grid>
+                <Grid item sm={12} md={3}></Grid>
                 <Button onClick={handleReset}>Reset</Button>
               </>
             ) : (
               <>
-              <form autoComplete="off" onSubmit={(e) => handleNext(e)}>
-                <Grid item container className={classes.instructions}>
-                  {getStepContent(activeStep)}
-                </Grid>
-                <Grid item>
-                  <Button
-                    disabled={activeStep === 0}
-                    onClick={handleBack}
-                    className={classes.backButton}
+                <form autoComplete="off" onSubmit={(e) => handleNext(e)}>
+                  <Grid item container className={classes.instructions}>
+                    {getStepContent(activeStep)}
+                  </Grid>
+                  <Grid
+                    item
+                    container
+                    alignItems="center"
+                    justifyContent="center"
                   >
-                    Back
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                  >
-                    {activeStep === steps.length - 1 ? "Finish" : "Next"}
-                  </Button>
-                </Grid>
+                    <Button
+                      disabled={activeStep === 0}
+                      onClick={handleBack}
+                      className={classes.backButton}
+                    >
+                      Back
+                    </Button>
+                    <Button variant="contained" color="primary" type="submit">
+                      {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                    </Button>
+                  </Grid>
                 </form>
               </>
             )}
