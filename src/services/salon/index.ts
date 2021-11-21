@@ -12,21 +12,24 @@ export async function newSalon(
   });
 }
 
-export async function updateSalon(Salon: Salon): Promise<AxiosResponse<Salon>> {
-  return await axios.patch<Salon>(`${baseUrl}/salon`, Salon);
+export async function updateSalon(
+  Salon: Salon
+): Promise<AxiosResponse<CustomResponse<Salon>>> {
+  return await axios.patch<CustomResponse<Salon>>(`${baseUrl}/salon`, {
+    salon: Salon,
+  });
 }
 
-// export async function deleteSalon(id: string): Promise<Salon> {
-//   try {
-//     const { data } = await axios.delete<Salon>(`${baseUrl}/salon`, {id});
-//     return data;
-//   } catch (error) {
-//     return error;
-//   }
-// }
+export async function deleteSalon(
+  id: string
+): Promise<AxiosResponse<CustomResponse<string>>> {
+  return await axios.delete(`${baseUrl}/salon`, { data: { id } });
+}
 
-export async function getSalon(id: string): Promise<AxiosResponse<Salon>> {
-  return await axios.get<Salon>(`${baseUrl}/salon/${id}`);
+export async function getSalon(
+  id: string
+): Promise<AxiosResponse<CustomResponse<Salon>>> {
+  return await axios.get<CustomResponse<Salon>>(`${baseUrl}/salon/${id}`);
 }
 
 export async function allSalon(

@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { Employees, Positions, Services } from "../types";
-import { CardMedia, NativeSelect, Paper, Typography } from "@material-ui/core";
+import { CardMedia, Paper, Typography } from "@material-ui/core";
 import { allPosition } from "../../../services/position";
 import { Position } from "../../../services/position/types";
-import { Employee } from "../../../services/Employees";
+import { Employee } from "../../../services/Employees/types";
 import { Service } from "../../../services/Service/types";
+import { allSalon } from "../../../services/salon";
+import { Salon } from "../../../services/salon/types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,22 +42,49 @@ const SelectEmployee = ({
   handleServices,
 }: Props) => {
   const classes = useStyles();
+  const [selectedSalon, setSelectedSalon] = useState<Salon>();
   const [selectedPosition, setSelectedPosition] = useState<Position>();
   const [selectedEmployee, setSelectedEmployee] = useState<Employee>();
+  const [salons, setSalons] = useState<Salon[]>();
   const [positions, setPositions] = useState<Position[]>();
   const [employees, setEmployees] = useState<Employee[]>();
 
   useEffect(() => {
-    // allPosition({ name: "Бръснар" })
-    allPosition()
+    allSalon()
       .then(({ data }) => {
         console.log(data);
-        setPositions(data.result);
+        setSalons(data.result);
       })
       .catch((error) => {
         console.log(error);
       });
+    // allPosition()
+    //   .then(({ data }) => {
+    //     console.log(data);
+    //     setPositions(data.result);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }, []);
+
+  const handleChangeSalon = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const salon = salons?.find(
+      (salon) => salon.name === (event.target.value as string)
+    );
+    if (salon) {
+      setSelectedSalon(salon);
+      // handleSelectedSalon(salon);
+      allPosition({ salonId: salon.id })
+        .then(({ data }) => {
+          console.log(data);
+          setPositions(data.result);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
 
   const handleChangePosition = (
     event: React.ChangeEvent<{ value: unknown }>
@@ -95,6 +122,24 @@ const SelectEmployee = ({
   return (
     <>
       <Paper elevation={3} className={classes.root}>
+        {salons && (
+          <FormControl fullWidth required className={classes.formControl}>
+            <InputLabel id="salon">salons</InputLabel>
+            <Select
+              labelId="salon"
+              id="position-required"
+              value={selectedSalon?.name ?? ""}
+              onChange={handleChangeSalon}
+              className={classes.selectEmpty}
+            >
+              {salons.map((salon) => (
+                <MenuItem key={salon.id} value={salon.name}>
+                  {salon.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
         {positions && (
           <FormControl fullWidth required className={classes.formControl}>
             <InputLabel id="position">Позиция</InputLabel>

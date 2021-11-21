@@ -1,32 +1,24 @@
+import React, { useEffect, useState } from "react";
 import {
   FormControl,
   FormLabel,
   FormGroup,
   FormControlLabel,
   Checkbox,
-  FormHelperText,
   createStyles,
   makeStyles,
   Theme,
 } from "@material-ui/core";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Position } from "../../../services/position/types";
-import { allService, getService } from "../../../services/Service";
 import { Service } from "../../../services/Service/types";
-import { Services } from "../types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      display: "flex",
-    },
-    formControl: {
-      margin: theme.spacing(3),
-    },
+    root: { display: "flex" },
+    formControl: { margin: theme.spacing(3) },
   })
 );
 
+type Chekboxes = { name: string; value: boolean };
 type Props = {
   services: Service[];
   handleSelectedServices: (service: Service[]) => void;
@@ -34,7 +26,6 @@ type Props = {
 
 const SelectService = ({ services, handleSelectedServices }: Props) => {
   const classes = useStyles();
-  type Chekboxes = { name: string; value: boolean };
   const [isCheckboxesChecked, setIsCheckboxesChecked] = useState<Chekboxes[]>();
   const [selectedService, setSelectedService] = useState<Service>();
 

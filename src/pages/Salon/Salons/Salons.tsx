@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
 import { GridColDef } from "@material-ui/data-grid";
-import CustomTable from "../components/CustomTable";
+import CustomTable from "../../../components/CustomTable/CustomTable";
 
 const columns: GridColDef[] = [
   { field: "id", hide: true },

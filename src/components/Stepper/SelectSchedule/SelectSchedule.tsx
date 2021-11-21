@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Schedule } from "../../../services/Schedule/types";
 import {
   Calendar,
-  CalendarProps,
   momentLocalizer,
   SlotInfo,
   stringOrDate,
@@ -19,7 +18,6 @@ import {
   FormHelperText,
   Grid,
   IconButton,
-  LinearProgress,
   makeStyles,
   Paper,
   TextField,
@@ -38,34 +36,17 @@ const localizer = momentLocalizer(moment);
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    grid: {
-      flexGrow: 1,
-    },
-    leftIcon: {
-      marginRight: theme.spacing(1),
-    },
-    rightIcon: {
-      marginLeft: theme.spacing(1),
-    },
-    iconSmall: {
-      fontSize: 20,
-    },
-    root: {
-      padding: theme.spacing(3, 2),
-    },
-    margin: {
-      margin: theme.spacing(1),
-    },
-    button: {
-      margin: theme.spacing(1),
-    },
+    grid: { flexGrow: 1 },
+    leftIcon: { marginRight: theme.spacing(1) },
+    rightIcon: { marginLeft: theme.spacing(1) },
+    iconSmall: { fontSize: 20 },
+    root: { padding: theme.spacing(3, 2) },
+    margin: { margin: theme.spacing(1) },
+    button: { margin: theme.spacing(1) },
   })
 );
 
-type SelectedEventForCreat = {
-  start: stringOrDate;
-  end: stringOrDate;
-};
+type SelectedEventForCreat = { start: stringOrDate; end: stringOrDate };
 
 type Props = {
   employeeId: number | undefined;

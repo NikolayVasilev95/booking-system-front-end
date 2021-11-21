@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Button,
   Stepper,
@@ -6,13 +7,10 @@ import {
   Step,
   StepLabel,
   Theme,
-  Typography,
   Grid,
   Container,
 } from "@material-ui/core";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Employee } from "../../services/Employees";
+import { Employee } from "../../services/Employees/types";
 import { Position } from "../../services/position/types";
 import { newSchedule, updateSchedule } from "../../services/Schedule";
 import { Schedule } from "../../services/Schedule/types";
@@ -21,7 +19,6 @@ import { CustomAlert } from "../../utils/CustomAlert";
 import SelectEmployee from "./SelectEmployee/SelectEmployee";
 import SelectSchedule from "./SelectSchedule/SelectSchedule";
 import SelectService from "./SelectService/SelectService";
-import { Employees, Positions, Schedules, Services } from "./types";
 import { format } from "date-fns";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -47,7 +44,7 @@ const BookingStepper = () => {
   const [selectedServices, setSelectedServices] = useState<Service[]>();
   const [employeeName, setEmployeeName] = useState<string>();
   const [services, setServices] = useState<Service[]>();
-  const [schedule, setSchedule] = useState<Schedules>();
+  const [schedule, setSchedule] = useState<Schedule>();
   const [finishData, setFinishData] = useState<string>("");
 
   const steps = ["изберете служител", "изберете услуга", "резервирай час"];

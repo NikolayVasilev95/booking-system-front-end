@@ -5,31 +5,28 @@ import { Position } from "./types";
 const baseUrl = "http://localhost:8998/api";
 
 export async function newPosition(
-  position: Position
+  Position: Position
 ): Promise<AxiosResponse<CustomResponse<Position>>> {
-  return await axios.post<CustomResponse<Position>>(
-    `${baseUrl}/position`,
-    position
-  );
+  console.log(Position);
+
+  return await axios.post<CustomResponse<Position>>(`${baseUrl}/position`, {
+    position: Position,
+  });
 }
 
 export async function updatePosition(
-  position: Position
+  Position: Position
 ): Promise<AxiosResponse<CustomResponse<Position>>> {
-  return await axios.patch<CustomResponse<Position>>(
-    `${baseUrl}/position`,
-    position
-  );
+  return await axios.patch<CustomResponse<Position>>(`${baseUrl}/position`, {
+    position: Position,
+  });
 }
 
-// export async function deletePosition(id: string): Promise<Position> {
-//   try {
-//     const { data } = await axios.delete<Position>(`${baseUrl}/position`, {id});
-//     return data;
-//   } catch (error) {
-//     return error;
-//   }
-// }
+export async function deletePosition(
+  id: string
+): Promise<AxiosResponse<CustomResponse<string>>> {
+  return await axios.delete(`${baseUrl}/position`, { data: { id } });
+}
 
 export async function getPosition(
   id: string

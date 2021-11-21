@@ -1,6 +1,6 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
 import React, { ReactElement } from "react";
-import NavBar from "../NavBar/NavBar";
+import NavBar from "../components/NavBar/NavBar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
