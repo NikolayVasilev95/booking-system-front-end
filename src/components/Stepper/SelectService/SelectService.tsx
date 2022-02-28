@@ -10,6 +10,8 @@ import {
   Theme,
 } from "@material-ui/core";
 import { Service } from "../../../services/Service/types";
+import { Position } from "../../../services/position/types";
+import { allService } from "../../../services/Service";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,35 +22,49 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type Chekboxes = { name: string; value: boolean };
 type Props = {
-  services: Service[];
+  selectedPosition: Position;
   handleSelectedServices: (service: Service[]) => void;
 };
 
-const SelectService = ({ services, handleSelectedServices }: Props) => {
+const SelectService = ({ selectedPosition, handleSelectedServices }: Props) => {
   const classes = useStyles();
   const [isCheckboxesChecked, setIsCheckboxesChecked] = useState<Chekboxes[]>();
+  const [services, setServices] = useState<Service[]>();
   const [selectedService, setSelectedService] = useState<Service>();
 
   useEffect(() => {
-    setIsCheckboxesChecked(
-      services.map((service) => ({ name: service.name, value: false }))
-    );
-  }, [services]);
+    console.log(selectedPosition);
+    allService({ positionId: selectedPosition.id })
+      .then(({ data }) => {
+        console.log(data);
+        setServices(data.result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // setIsCheckboxesChecked(
+    //   services.map((service) => ({ name: service.name, value: false }))
+    // );
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.name);
+
     const newIsCheckboxesCheckedState = isCheckboxesChecked?.map((checkbox) =>
       checkbox.name === event.target.name
         ? { name: checkbox.name, value: !checkbox.value }
         : checkbox
     );
+    console.log(newIsCheckboxesCheckedState);
+
     setIsCheckboxesChecked(newIsCheckboxesCheckedState);
-    handleSelectedServices(
-      services.filter(
-        (service, index) =>
-          service.name === newIsCheckboxesCheckedState?.[index].name &&
-          newIsCheckboxesCheckedState?.[index].value
-      )
-    );
+    // handleSelectedServices(
+    //   services.filter(
+    //     (service, index) =>
+    //       service.name === newIsCheckboxesCheckedState?.[index].name &&
+    //       newIsCheckboxesCheckedState?.[index].value
+    //   )
+    // );
   };
 
   return (

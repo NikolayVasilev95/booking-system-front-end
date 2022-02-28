@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { queryUrl } from "../helper";
 import { CustomResponse } from "../types";
 import { Calendar } from "./types";
 
@@ -41,8 +42,6 @@ export async function allCalendar(
   query?: any
 ): Promise<AxiosResponse<CustomResponse<Calendar[]>>> {
   return await axios.get<CustomResponse<Calendar[]>>(
-    `${baseUrl}/calendars/query${
-      query ? `?${Object.keys(query).map((el) => `${el}=${query[el]}`)}` : "/"
-    }`
+    `${baseUrl}/calendars?${queryUrl(query)}`
   );
 }

@@ -16,23 +16,12 @@ export default function NewSalon() {
     data: string;
     severity: "success" | "info" | "warning" | "error";
   }>();
-  const [salons, setSalons] = useState<Salon[]>();
 
   const {
     handleSubmit,
     // formState: { errors },
     control,
-  } = useForm<Position>({ defaultValues: { name: "", salonId: 0 } });
-
-  useEffect(() => {
-    allSalon()
-      .then(({ data }) => {
-        setSalons(data.result);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  } = useForm<Position>({ defaultValues: { name: "" } });
 
   const onSubmit = async (data: Position) => {
     newPosition(data)
@@ -58,21 +47,6 @@ export default function NewSalon() {
             isFullWidth={true}
             isRequired={true}
           />
-          {salons && (
-            <FormInputDropdown
-              name="salonId"
-              control={control}
-              labelId="salon"
-              label="Salon"
-              options={salons.map((salon) => (
-                <MenuItem key={salon.id} value={salon.id}>
-                  {salon.name}
-                </MenuItem>
-              ))}
-              isFullWidth={true}
-              isRequired={true}
-            />
-          )}
           <FormSubmitButton size="small" title="Запазване" />
         </CardContent>
         {alertData && (

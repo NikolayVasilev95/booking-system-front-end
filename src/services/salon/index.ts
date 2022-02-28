@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { queryUrl } from "../helper";
 import { CustomResponse } from "../types";
 import { Salon } from "./types";
 
@@ -36,6 +37,6 @@ export async function allSalon(
   query?: any
 ): Promise<AxiosResponse<CustomResponse<Salon[]>>> {
   return await axios.get<CustomResponse<Salon[]>>(
-    `${baseUrl}/salons/query${query ? `?${query}` : "/"}`
+    `${baseUrl}/salons?${queryUrl(query)}`
   );
 }

@@ -106,9 +106,9 @@ const BookingStepper = () => {
         );
       case 1:
         return (
-          services && (
+          selectedPosition && (
             <SelectService
-              services={services}
+              selectedPosition={selectedPosition}
               handleSelectedServices={handleSelectedServices}
             />
           )

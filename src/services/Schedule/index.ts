@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { queryUrl } from "../helper";
 import { CustomResponse } from "../types";
 import { Schedule } from "./types";
 
@@ -39,8 +40,6 @@ export async function allSchedule(
   query?: any
 ): Promise<AxiosResponse<CustomResponse<Schedule[]>>> {
   return await axios.get<CustomResponse<Schedule[]>>(
-    `${baseUrl}/schedules/query${
-      query ? `?${Object.keys(query).map((el) => `${el}=${query[el]}`)}` : "/"
-    }`
+    `${baseUrl}/schedules?${queryUrl(query)}`
   );
 }

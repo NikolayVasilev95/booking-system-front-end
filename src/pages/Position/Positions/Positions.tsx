@@ -6,7 +6,6 @@ import CustomTable from "../../../components/CustomTable/CustomTable";
 const columns: GridColDef[] = [
   { field: "id", hide: true },
   { field: "name", headerName: "NAME", width: 170 },
-  { field: "salonId", headerName: "SalonId", width: 170 },
 ];
 
 export default function Positions() {

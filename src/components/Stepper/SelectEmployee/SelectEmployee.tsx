@@ -11,6 +11,7 @@ import { Employee } from "../../../services/Employees/types";
 import { Service } from "../../../services/Service/types";
 import { allSalon } from "../../../services/salon";
 import { Salon } from "../../../services/salon/types";
+import { allEmployee } from "../../../services/Employees";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,15 +59,31 @@ const SelectEmployee = ({
       .catch((error) => {
         console.log(error);
       });
-    // allPosition()
-    //   .then(({ data }) => {
-    //     console.log(data);
-    //     setPositions(data.result);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+    allPosition()
+      .then(({ data }) => {
+        console.log(data);
+        setPositions(data.result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
+
+  useEffect(() => {
+    if (selectedSalon && selectedPosition) {
+      allEmployee({
+        salonId: selectedSalon.id,
+        positionId: selectedPosition.id,
+      })
+        .then(({ data }) => {
+          setEmployees(data.result);
+          console.log(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [selectedSalon, selectedPosition]);
 
   const handleChangeSalon = (event: React.ChangeEvent<{ value: unknown }>) => {
     const salon = salons?.find(
@@ -74,15 +91,7 @@ const SelectEmployee = ({
     );
     if (salon) {
       setSelectedSalon(salon);
-      // handleSelectedSalon(salon);
-      allPosition({ salonId: salon.id })
-        .then(({ data }) => {
-          console.log(data);
-          setPositions(data.result);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      //   // handleSelectedSalon(salon);
     }
   };
 
@@ -95,15 +104,6 @@ const SelectEmployee = ({
     if (position) {
       setSelectedPosition(position);
       handleSelectedPosition(position);
-      allPosition({ name: event.target.value })
-        .then(({ data }) => {
-          console.log(data);
-          setEmployees(data.result[0].Employees);
-          data.result[0].Services && handleServices(data.result[0].Services);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     }
   };
 
@@ -122,43 +122,43 @@ const SelectEmployee = ({
   return (
     <>
       <Paper elevation={3} className={classes.root}>
-        {salons && (
-          <FormControl fullWidth required className={classes.formControl}>
-            <InputLabel id="salon">salons</InputLabel>
-            <Select
-              labelId="salon"
-              id="position-required"
-              value={selectedSalon?.name ?? ""}
-              onChange={handleChangeSalon}
-              className={classes.selectEmpty}
-            >
-              {salons.map((salon) => (
-                <MenuItem key={salon.id} value={salon.name}>
-                  {salon.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        {salons && positions && (
+          <>
+            <FormControl fullWidth required className={classes.formControl}>
+              <InputLabel id="salon">salons</InputLabel>
+              <Select
+                labelId="salon"
+                id="position-required"
+                value={selectedSalon?.name ?? ""}
+                onChange={handleChangeSalon}
+                className={classes.selectEmpty}
+              >
+                {salons.map((salon) => (
+                  <MenuItem key={salon.id} value={salon.name}>
+                    {salon.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth required className={classes.formControl}>
+              <InputLabel id="position">Позиция</InputLabel>
+              <Select
+                labelId="position"
+                id="position-required"
+                value={selectedPosition?.name ?? ""}
+                onChange={handleChangePosition}
+                className={classes.selectEmpty}
+              >
+                {positions.map((position: Position) => (
+                  <MenuItem key={position.id} value={position.name}>
+                    {position.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </>
         )}
-        {positions && (
-          <FormControl fullWidth required className={classes.formControl}>
-            <InputLabel id="position">Позиция</InputLabel>
-            <Select
-              labelId="position"
-              id="position-required"
-              value={selectedPosition?.name ?? ""}
-              onChange={handleChangePosition}
-              className={classes.selectEmpty}
-            >
-              {positions.map((position: Position) => (
-                <MenuItem key={position.id} value={position.name}>
-                  {position.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-        {selectedPosition && (
+        {employees && (
           <FormControl fullWidth required className={classes.formControl}>
             <InputLabel id="employee">Име на служителя</InputLabel>
             <Select

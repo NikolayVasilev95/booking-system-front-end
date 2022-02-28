@@ -5,7 +5,7 @@ import { Service } from "./types";
 const baseUrl = "http://localhost:8998/api";
 
 export async function newService(
-    service: Service
+  service: Service
 ): Promise<AxiosResponse<CustomResponse<Service>>> {
   return await axios.post<CustomResponse<Service>>(
     `${baseUrl}/service`,
@@ -41,7 +41,7 @@ export async function allService(
   query?: any
 ): Promise<AxiosResponse<CustomResponse<Service[]>>> {
   return await axios.get<CustomResponse<Service[]>>(
-    `${baseUrl}/services/query${
+    `${baseUrl}/services${
       query ? `?${Object.keys(query).map((el) => `${el}=${query[el]}`)}` : "/"
     }`
   );

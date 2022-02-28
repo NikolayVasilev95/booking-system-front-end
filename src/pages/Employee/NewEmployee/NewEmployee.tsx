@@ -7,25 +7,39 @@ import FormLayout from "../../../utils/FormLayout";
 import { CardContent, MenuItem } from "@material-ui/core";
 import { allEmployee, newEmployee } from "../../../services/Employees";
 import { Employee } from "../../../services/Employees/types";
+import { FormInputText } from "../../../utils/Form/FormInputText/FormInputText";
+import { FormTextArea } from "../../../utils/Form/FromTextArea/FromTextArea";
+import { FormFileUpload } from "../../../utils/Form/FormFileUpload/FormFileUpload";
+import { Position } from "../../../services/position/types";
+import { Salon } from "../../../services/salon/types";
+import { allSalon } from "../../../services/salon";
+import { allPosition } from "../../../services/position";
 
 export default function NewEmployee() {
   const [alertData, setAlertData] = useState<{
     data: string;
     severity: "success" | "info" | "warning" | "error";
   }>();
-  const [salons, setSalons] = useState<Employee[]>();
+  const [salons, setSalons] = useState<Salon[]>();
+  const [positions, setPositions] = useState<Position[]>();
 
   const {
     handleSubmit,
     // formState: { errors },
     control,
   } = useForm<Employee>();
-  //   { defaultValues: { name: "", salonId: 0 } }
 
   useEffect(() => {
-    allEmployee()
+    allSalon()
       .then(({ data }) => {
         setSalons(data.result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    allPosition()
+      .then(({ data }) => {
+        setPositions(data.result);
       })
       .catch((error) => {
         console.log(error);
@@ -33,6 +47,8 @@ export default function NewEmployee() {
   }, []);
 
   const onSubmit = async (data: Employee) => {
+    console.log(data);
+
     newEmployee(data)
       .then(({ data }) => {
         if (data.status === "success")
@@ -48,13 +64,47 @@ export default function NewEmployee() {
     <FormLayout cardHeaderTitle="Employee" backSpaceButton="/employee">
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>
-          {/* <FormInputText
-            name="name"
+          <FormInputText
+            name="firstName"
             control={control}
-            labelId="name"
-            label="Name"
+            labelId="firstName"
+            label="First Name"
             isFullWidth={true}
             isRequired={true}
+          />
+          <FormInputText
+            name="middleName"
+            control={control}
+            labelId="middleName"
+            label="Middle Name"
+            isFullWidth={true}
+            isRequired={true}
+          />
+          <FormInputText
+            name="lastName"
+            control={control}
+            labelId="lastName"
+            label="Last Name"
+            isFullWidth={true}
+            isRequired={true}
+          />
+          <FormFileUpload
+            name="img"
+            control={control}
+            isFullWidth={true}
+            isRequired={true}
+            acceptedFiles={["image/jpeg", "image/png"]}
+            filesLimit={1}
+            maxFileSize={3000000}
+          />
+          <FormTextArea
+            name="description"
+            control={control}
+            labelId="description"
+            label="Description"
+            isFullWidth={true}
+            isRequired={true}
+            minRows={3}
           />
           {salons && (
             <FormInputDropdown
@@ -70,7 +120,22 @@ export default function NewEmployee() {
               isFullWidth={true}
               isRequired={true}
             />
-          )} */}
+          )}
+          {positions && (
+            <FormInputDropdown
+              name="positionId"
+              control={control}
+              labelId="position"
+              label="Position"
+              options={positions.map((position) => (
+                <MenuItem key={position.id} value={position.id}>
+                  {position.name}
+                </MenuItem>
+              ))}
+              isFullWidth={true}
+              isRequired={true}
+            />
+          )}
           <FormSubmitButton size="small" title="Запазване" />
         </CardContent>
         {alertData && (

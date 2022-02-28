@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { queryUrl } from "../helper";
 import { CustomResponse } from "../types";
 import { Employee } from "./types";
 
@@ -36,8 +37,6 @@ export async function allEmployee(
   query?: any
 ): Promise<AxiosResponse<CustomResponse<Employee[]>>> {
   return await axios.get<CustomResponse<Employee[]>>(
-    `${baseUrl}/employees/query${
-      query ? `?${Object.keys(query).map((el) => `${el}=${query[el]}`)}` : "/"
-    }`
+    `${baseUrl}/employees?${queryUrl(query)}`
   );
 }

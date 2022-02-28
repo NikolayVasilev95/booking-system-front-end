@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { queryUrl } from "../helper";
 import { CustomResponse } from "../types";
 import { Position } from "./types";
 
@@ -38,8 +39,6 @@ export async function allPosition(
   query?: any
 ): Promise<AxiosResponse<CustomResponse<Position[]>>> {
   return await axios.get<CustomResponse<Position[]>>(
-    `${baseUrl}/positions/query${
-      query ? `?${Object.keys(query).map((el) => `${el}=${query[el]}`)}` : "/"
-    }`
+    `${baseUrl}/positions?${queryUrl(query)}`
   );
 }
